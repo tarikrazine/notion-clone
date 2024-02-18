@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1708212065469,
+      "tag": "0000_flat_sunset_bain",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1708213720833,
+      "tag": "0001_nervous_joseph",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708215511256,
+      "tag": "0002_sloppy_mephistopheles",
+      "breakpoints": true
+    }
+  ]
+}

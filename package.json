@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "drizzle:pull": "drizzle-kit introspect:pg",
+    "drizzle:generate": "drizzle-kit generate:pg",
+    "drizzle:drop": "drizzle-kit drop",
+    "drizzle:check": "drizzle-kit check:pg",
+    "drizzle:up": "drizzle-kit up:pg"
   },
   "dependencies": {
     "dotenv": "^16.4.4",
