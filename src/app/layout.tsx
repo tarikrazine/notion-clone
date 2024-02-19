@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 
 import "./globals.css";
 
@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
 
-const inter = Inter({ subsets: ["latin"] });
+const dm_Sans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "%s | Notion clone",
@@ -24,8 +24,8 @@ export default async function RootLayout({
 
   // console.log(data);
   return (
-    <html lang="en">
-      <body className={`bg-background ${inter.className}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`bg-background ${dm_Sans.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

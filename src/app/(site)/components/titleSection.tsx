@@ -15,7 +15,7 @@ function TitleSection(props: TitleSectionProps) {
           <h2 className="text-left text-3xl font-semibold dark:text-purple-200 sm:max-w-[750px] sm:text-5xl md:text-center">
             {props.title}
           </h2>
-          <p className="dark:text-purple-700 sm:max-w-[450px] md:text-center">
+          <p className="dark:text-purple-100 sm:max-w-[450px] md:text-center">
             {props.subHeading}
           </p>
         </>
