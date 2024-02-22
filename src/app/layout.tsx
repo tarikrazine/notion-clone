@@ -11,7 +11,7 @@ import { workspaces } from "@/db/schema/workspaces";
 const dm_Sans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "%s | Notion clone",
+  title: "Notion clone",
   description: "Notion clone application",
 };
 
@@ -29,7 +29,6 @@ export default async function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
           disableTransitionOnChange
         >
           {children}
