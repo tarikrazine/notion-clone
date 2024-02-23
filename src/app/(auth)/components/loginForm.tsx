@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 import { Loader, LogIn } from "lucide-react";
 
-import { LoginSchema, LoginSchemaType } from "@/schema/login.schema";
 import {
   Form,
   FormControl,
@@ -19,11 +19,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import FormValidationErrors from "@/components/formValidationErrors";
+
+import { LoginSchema, LoginSchemaType } from "@/schema/login.schema";
+import { login } from "@/actions/login";
+import FormServerErrors from "@/components/formServerErrors";
 
 function LoginForm() {
   const router = useRouter();
 
   const [submitError, setSubmitError] = useState("");
+  const [serverValidationError, setServerValidationError] = useState<
+    Record<string, string[] | undefined>
+  >({});
 
   const form = useForm<LoginSchemaType>({
     mode: "onChange",
@@ -34,10 +42,35 @@ function LoginForm() {
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
+  const { execute: loginAction, status } = useAction(login, {
+    onSuccess(data) {
+      if (data?.error) {
+        form.reset();
+        setSubmitError(data.message);
+      }
+
+      if (data?.success) {
+        router.push("/dashboard");
+      }
+    },
+    onError(error) {
+      if (error.validationErrors) {
+        setServerValidationError(error.validationErrors);
+      }
+    },
+  });
+
+  const id = Object.keys(serverValidationError);
+
+  const isLoading = form.formState.isSubmitting || status === "executing";
 
   function handleFormSubmit(values: LoginSchemaType) {
-    console.log({ values });
+    setServerValidationError({});
+    setSubmitError("");
+    loginAction({
+      email: values.email,
+      password: values.password,
+    });
   }
 
   return (
@@ -89,9 +122,8 @@ function LoginForm() {
             )}
           />
         </div>
-        {submitError ? (
-          <FormMessage className="text-center">{submitError}</FormMessage>
-        ) : null}
+        <FormValidationErrors id={id} errors={serverValidationError} />
+        <FormServerErrors error={submitError} />
         <Button
           type="submit"
           className="w-full p-6"
