@@ -11,8 +11,8 @@ import { workspaces } from "@/db/schema/workspaces";
 const dm_Sans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Notion clone",
-  description: "Notion clone application",
+  title: "Notion clone - Cypress",
+  description: "Notion clone cypress application",
 };
 
 export default async function RootLayout({

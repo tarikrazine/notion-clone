@@ -1,1 +1,1 @@
-# Notion Clone
+# Notion Clone - Cypress

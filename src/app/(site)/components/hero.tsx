@@ -18,7 +18,7 @@ function Hero() {
           variant={"btn-secondary"}
           className="w-full rounded-[10px] bg-background p-6 text-2xl"
         >
-          Get Notion Free
+          Get Cypress Free
         </Button>
       </div>
       <div className="relative ml-[-50px] mt-[-40px] flex w-[750px] items-center justify-center sm:ml-0 sm:w-full md:mt-[-90px]">

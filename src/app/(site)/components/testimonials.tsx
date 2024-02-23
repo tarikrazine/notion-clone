@@ -35,7 +35,7 @@ function Testimonials() {
             {USERS.map((testimonial, index) => (
               <CustomCard
                 key={testimonial.name}
-                className="w-[500px] shrink-0 rounded-xl border-8 border-opacity-10 dark:bg-gradient-to-t dark:from-border dark:to-background"
+                className="w-[500px] shrink-0 rounded-xl dark:bg-gradient-to-t dark:from-border dark:to-background"
                 card_header={
                   <div className="flex items-center gap-4">
                     <Avatar>
