@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { Loader, LogIn } from "lucide-react";
+import { Loader, UserPlus } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Form,
@@ -20,29 +21,39 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormValidationErrors from "@/components/formValidationErrors";
-
-import { LoginSchema, LoginSchemaType } from "@/schema/login.schema";
-import { login } from "@/actions/login";
 import FormServerErrors from "@/components/formServerErrors";
 
-function LoginForm() {
+import { RegisterSchema, RegisterSchemaType } from "@/schema/register.schema";
+import { register } from "@/actions/register";
+import FormServerSuccess from "@/components/formServerSuccess";
+
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [submitError, setSubmitError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState("");
   const [serverValidationError, setServerValidationError] = useState<
     Record<string, string[] | undefined>
   >({});
+  const [confirmation, setConfirmation] = useState(false);
 
-  const form = useForm<LoginSchemaType>({
+  const exchangeError = useMemo(() => {
+    if (!searchParams) return "";
+    return searchParams.get("error_description");
+  }, [searchParams]);
+
+  const form = useForm<RegisterSchemaType>({
     mode: "onChange",
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: undefined,
       password: undefined,
+      confirmPassword: undefined,
     },
   });
 
-  const { execute: loginAction, status } = useAction(login, {
+  const { execute: registerAction, status } = useAction(register, {
     onSuccess(data) {
       if (data?.error) {
         form.reset();
@@ -50,7 +61,9 @@ function LoginForm() {
       }
 
       if (data?.success) {
-        router.push("/dashboard");
+        form.reset();
+        // Todo: Toast for confirmation email
+        setSubmitSuccess("Check your email for confirmation link");
       }
     },
     onError(error) {
@@ -64,12 +77,15 @@ function LoginForm() {
 
   const isLoading = form.formState.isSubmitting || status === "executing";
 
-  function handleFormSubmit(values: LoginSchemaType) {
+  function handleFormSubmit(values: RegisterSchemaType) {
     setServerValidationError({});
     setSubmitError("");
-    loginAction({
+    setSubmitSuccess("");
+
+    registerAction({
       email: values.email,
       password: values.password,
+      confirmPassword: values.confirmPassword,
     });
   }
 
@@ -80,6 +96,7 @@ function LoginForm() {
         className="space-y-6"
         onChange={() => {
           if (submitError) setSubmitError("");
+          if (submitSuccess) setSubmitSuccess("");
           if (serverValidationError) setServerValidationError({});
         }}
       >
@@ -122,9 +139,29 @@ function LoginForm() {
               </FormItem>
             )}
           />
+          <FormField
+            name="confirmPassword"
+            control={form.control}
+            disabled={isLoading}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Confirm your password"
+                    disabled={isLoading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <FormValidationErrors id={id} errors={serverValidationError} />
         <FormServerErrors error={submitError} />
+        <FormServerSuccess success={submitSuccess} />
         <Button
           type="submit"
           className="w-full p-6"
@@ -134,13 +171,13 @@ function LoginForm() {
           {isLoading ? (
             <Loader className="mr-2 h-5 w-5 animate-spin" />
           ) : (
-            <LogIn className="mr-2 h-5 w-5" />
+            <UserPlus className="mr-2 h-5 w-5" />
           )}
-          Login
+          Register
         </Button>
       </form>
     </Form>
   );
 }
 
-export default LoginForm;
+export default RegisterForm;

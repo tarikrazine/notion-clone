@@ -1,7 +1,7 @@
 import { XCircle } from "lucide-react";
 
 interface FormServerErrorsProps {
-  error: string;
+  error: string | null;
 }
 
 function FormServerErrors(props: FormServerErrorsProps) {

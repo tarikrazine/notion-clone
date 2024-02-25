@@ -6,7 +6,7 @@ export default function LoginPage() {
     <CardFormWrapper
       headerLabel="Welcome back"
       backButtonLabel="Don't have an account?"
-      backButtonHref="/register"
+      backButtonHref="/signup"
     >
       <LoginForm />
     </CardFormWrapper>

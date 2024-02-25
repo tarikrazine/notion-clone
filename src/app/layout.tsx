@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
+import { Toaster } from "@/components/ui/sonner";
 
 const dm_Sans = DM_Sans({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
