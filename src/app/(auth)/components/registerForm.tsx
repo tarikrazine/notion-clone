@@ -28,7 +28,6 @@ import { register } from "@/actions/register";
 import FormServerSuccess from "@/components/formServerSuccess";
 
 function RegisterForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [submitError, setSubmitError] = useState("");
@@ -36,7 +35,6 @@ function RegisterForm() {
   const [serverValidationError, setServerValidationError] = useState<
     Record<string, string[] | undefined>
   >({});
-  const [confirmation, setConfirmation] = useState(false);
 
   const exchangeError = useMemo(() => {
     if (!searchParams) return "";
@@ -161,6 +159,7 @@ function RegisterForm() {
         </div>
         <FormValidationErrors id={id} errors={serverValidationError} />
         <FormServerErrors error={submitError} />
+        {exchangeError ? <FormServerErrors error={exchangeError} /> : null}
         <FormServerSuccess success={submitSuccess} />
         <Button
           type="submit"

@@ -10,19 +10,7 @@ import { RegisterSchema } from "@/schema/register.schema";
 export const register = action(RegisterSchema, async ({ email, password }) => {
   const supabase = createServerActionClient({ cookies });
 
-  const { data: existingUser } = await supabase.from("users").select("*").eq(
-    "email",
-    email,
-  );
-
-  if (existingUser?.length) {
-    return {
-      error: true,
-      message: "User already exists.",
-    };
-  }
-
-  const { data, error } = await supabase.auth.signUp({
+  const { data: { user }, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -38,8 +26,19 @@ export const register = action(RegisterSchema, async ({ email, password }) => {
     };
   }
 
-  return {
-    success: true,
-    user: data.user,
-  };
+  const emailIsTaken = user?.identities?.length === 0;
+
+  if (emailIsTaken) {
+    return {
+      error: true,
+      message: "Already signed up, sign in instead?",
+    };
+  }
+
+  if (user?.identities?.length) {
+    return {
+      success: true,
+      message: "Please confirm your email.",
+    };
+  }
 });
