@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import { desc, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
 import DashboardSetup from "./components/dashboardSetup";
+import { getUserSubscriptionStatus } from "@/lib/getUserSubscriptionStatus";
 
 export default async function DashboardPage() {
   const supabase = createServerComponentClient({ cookies });
@@ -24,17 +25,22 @@ export default async function DashboardPage() {
     );
   }
 
+  const { data: subscription, error: subscriptionError } =
+    await getUserSubscriptionStatus(user.id);
+
+  // if (subscriptionError) console.log(subscriptionError);
+
   const [workspace] = await db
     .select()
     .from(workspaces)
     .where(eq(workspaces.workspaceOwner, user.id))
-    .orderBy(desc(workspaces.createdAt))
+    .orderBy(asc(workspaces.createdAt))
     .limit(1);
 
   if (!workspace) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <DashboardSetup />
+        <DashboardSetup user={user} subscription={subscription} />
       </div>
     );
   }

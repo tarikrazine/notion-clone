@@ -34,15 +34,15 @@ const db = drizzle(client, {
   },
 });
 
-(async function migrateDB() {
-  try {
-    console.log("🟠 Running migrations");
-    await migrate(db, { migrationsFolder: "./src/migrations" });
-    console.log("🟢 Migrations completed");
-  } catch (error) {
-    console.log("[MIGRATE_ERROR]", error);
-    console.log("🔴 Migration failed");
-  }
-})();
+// (async function migrateDB() {
+//   try {
+//     console.log("🟠 Running migrations");
+//     await migrate(db, { migrationsFolder: "./src/migrations" });
+//     console.log("🟢 Migrations completed");
+//   } catch (error) {
+//     console.log("[MIGRATE_ERROR]", error);
+//     console.log("🔴 Migration failed");
+//   }
+// })();
 
 export default db;
