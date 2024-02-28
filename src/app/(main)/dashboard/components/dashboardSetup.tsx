@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 
+import { useRouter } from "next/navigation";
+
+import { v4 } from "uuid";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
 import EmojiPicker from "@/components/emojiPicker";
 import {
   Card,
@@ -10,12 +17,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Subscription } from "@/types/supabase";
+import { Subscription, Workspace } from "@/types/supabase";
 import { AuthUser } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { WorkspaceSchemaType } from "@/schema/workspace.schema";
+import { createWorkspace } from "@/lib/createWorkspace";
+import { useAppState } from "@/lib/providers/state-provider";
+import { Button } from "@/components/ui/button";
+import { FormDescription } from "@/components/ui/form";
+import { Loader } from "lucide-react";
 
 interface DashboardSetupProps {
   user: AuthUser;
@@ -24,6 +34,11 @@ interface DashboardSetupProps {
 
 function DashboardSetup(props: DashboardSetupProps) {
   const [selectedEmoji, setSelectedEmoji] = useState("💼");
+  const router = useRouter();
+
+  const workspaceId = v4();
+
+  const { dispatch } = useAppState();
 
   const supabase = createClientComponentClient();
 
@@ -40,27 +55,57 @@ function DashboardSetup(props: DashboardSetupProps) {
   async function onSubmit(value: WorkspaceSchemaType) {
     const file = value.workspaceLogo?.[0];
     let filePath = null;
-    // const workspaceUUID = v4();
-    console.log(file);
 
-    // if (file) {
-    //   try {
-    //     const { data, error } = await supabase.storage
-    //       .from("workspace-logos")
-    //       .upload(`workspaceLogo.${workspaceUUID}`, file, {
-    //         cacheControl: "3600",
-    //         upsert: true,
-    //       });
-    //     if (error) throw new Error("");
-    //     filePath = data.path;
-    //   } catch (error) {
-    //     console.log("Error", error);
-    //     // toast({
-    //     //   variant: "destructive",
-    //     //   title: "Error! Could not upload your workspace logo",
-    //     // });
-    //   }
-    // }
+    if (file) {
+      try {
+        const { data, error } = await supabase.storage
+          .from("workspace-logos")
+          .upload(`workspaceLogo.${workspaceId}-${file.name}`, file, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+        if (error) throw new Error("");
+        filePath = data.path;
+      } catch (error) {
+        console.log("Error", error);
+        toast.error("Error! Could not upload your workspace logo");
+      }
+
+      try {
+        const newWorkspace: Workspace = {
+          data: "",
+          iconId: selectedEmoji,
+          id: workspaceId,
+          inTrash: false,
+          title: value.workspaceName,
+          workspaceOwner: props.user.id,
+          logo: filePath || "",
+          bannerUrl: "",
+          createdAt: new Date().toISOString(),
+          updatedAt: null,
+        };
+        const { data, error: createError } =
+          await createWorkspace(newWorkspace);
+        if (createError) {
+          throw new Error();
+        }
+        dispatch({
+          type: "ADD_WORKSPACE",
+          payload: { ...newWorkspace, folders: [] },
+        });
+
+        toast.success(`${newWorkspace.title} has been created successfully.`);
+
+        router.replace(`/dashboard/${newWorkspace.id}`);
+      } catch (error) {
+        console.log(error, "Error");
+        toast.error(
+          "Oops! Something went wrong, and we couldn't create your workspace. Try again or come back later.",
+        );
+      } finally {
+        form.reset();
+      }
+    }
   }
 
   return (
@@ -113,12 +158,31 @@ function DashboardSetup(props: DashboardSetupProps) {
                 type="file"
                 accept="image/*"
                 placeholder="Workspace logo"
-                // disabled={isLoading || !props.subscription?.status}
+                disabled={isLoading || props.subscription?.status !== "active"}
                 {...form.register("workspaceLogo")}
               />
+              {props.subscription?.status !== "active" ? (
+                <small
+                  className="
+                  block
+                  text-muted-foreground
+              "
+                >
+                  To customize your workspace, you need to be on a Pro Plan
+                </small>
+              ) : null}
               <small className="text-rose-600">
                 {form.formState.errors.workspaceLogo?.message?.toString()}
               </small>
+            </div>
+            <div className="self-end">
+              <Button disabled={isLoading} type="submit">
+                {!isLoading ? (
+                  "Create Workspace"
+                ) : (
+                  <Loader className="h-5 w-5 animate-spin" />
+                )}
+              </Button>
             </div>
           </div>
         </form>

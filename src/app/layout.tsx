@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
 import { Toaster } from "@/components/ui/sonner";
+import AppStateProvider from "@/lib/providers/state-provider";
 
 const dm_Sans = DM_Sans({ subsets: ["latin"] });
 
@@ -32,7 +33,7 @@ export default async function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          {children}
+          <AppStateProvider>{children}</AppStateProvider>
           <Toaster />
         </ThemeProvider>
       </body>
