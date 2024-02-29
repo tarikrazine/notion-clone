@@ -19,8 +19,8 @@ import ListItem from "./listItem";
 import { cn } from "@/lib/utils";
 
 import Logo from "../../../../public/cypresslogo.svg";
-import { LogInIcon, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AuthUser } from "@supabase/supabase-js";
 
 const routes = [
   {
@@ -79,7 +79,11 @@ const components: { title: string; href: string; description: string }[] = [
   },
 ];
 
-function Header() {
+interface HeaderProps {
+  user: AuthUser | null;
+}
+
+function Header(props: HeaderProps) {
   const [path, setPath] = useState("");
 
   return (
@@ -180,16 +184,26 @@ function Header() {
         </NavigationMenuList>
       </NavigationMenu>
       <aside className="flex w-full justify-end gap-2">
-        <Link href="/login">
-          <Button variant={"btn-secondary"} className="hidden  p-1 sm:flex">
-            Login
-          </Button>
-        </Link>
-        <Link href="/signup">
-          <Button variant={"btn-primary"} className="whitespace-nowrap">
-            Sign Up
-          </Button>
-        </Link>
+        {props.user ? (
+          <Link href="/dashboard">
+            <Button variant={"btn-primary"} className="whitespace-nowrap">
+              Dashboard
+            </Button>
+          </Link>
+        ) : (
+          <>
+            <Link href="/login">
+              <Button variant={"btn-secondary"} className="hidden  p-1 sm:flex">
+                Login
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button variant={"btn-primary"} className="whitespace-nowrap">
+                Sign Up
+              </Button>
+            </Link>
+          </>
+        )}
       </aside>
     </header>
   );

@@ -28,8 +28,6 @@ export default async function DashboardPage() {
   const { data: subscription, error: subscriptionError } =
     await getUserSubscriptionStatus(user.id);
 
-  // if (subscriptionError) console.log(subscriptionError);
-
   const [workspace] = await db
     .select()
     .from(workspaces)
@@ -45,5 +43,5 @@ export default async function DashboardPage() {
     );
   }
 
-  return redirect(`/workspace/${workspace.id}`);
+  return redirect(`/dashboard/${workspace.id}`);
 }

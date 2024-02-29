@@ -11,6 +11,7 @@ import * as customers from "@/db/schema/customers";
 import * as products from "@/db/schema/products";
 import * as enums from "@/db/schema/enums";
 import * as subscriptions from "@/db/schema/subscriptions";
+import * as collaborators from "@/db/schema/collaborators";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("🚨 DATABASE_URL environment variable is not set");
@@ -31,6 +32,7 @@ const db = drizzle(client, {
     ...products,
     ...enums,
     ...subscriptions,
+    ...collaborators,
   },
 });
 

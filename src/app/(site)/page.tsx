@@ -4,7 +4,7 @@ import Features from "./components/features";
 import Testimonials from "./components/testimonials";
 import Pricing from "./components/pricing";
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <>
       <section className="relative gap-4 overflow-hidden px-4 pt-10 sm:flex sm:flex-col sm:px-6 md:items-center md:justify-center">

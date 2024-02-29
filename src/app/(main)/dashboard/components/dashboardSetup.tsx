@@ -8,6 +8,8 @@ import { v4 } from "uuid";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { AuthUser } from "@supabase/supabase-js";
+import { Loader } from "lucide-react";
 
 import EmojiPicker from "@/components/emojiPicker";
 import {
@@ -18,14 +20,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Subscription, Workspace } from "@/types/supabase";
-import { AuthUser } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
 import { WorkspaceSchemaType } from "@/schema/workspace.schema";
 import { createWorkspace } from "@/lib/createWorkspace";
 import { useAppState } from "@/lib/providers/state-provider";
 import { Button } from "@/components/ui/button";
-import { FormDescription } from "@/components/ui/form";
-import { Loader } from "lucide-react";
 
 interface DashboardSetupProps {
   user: AuthUser;
@@ -70,46 +69,45 @@ function DashboardSetup(props: DashboardSetupProps) {
         console.log("Error", error);
         toast.error("Error! Could not upload your workspace logo");
       }
+    }
 
-      try {
-        const newWorkspace: Workspace = {
-          data: "",
-          iconId: selectedEmoji,
-          id: workspaceId,
-          inTrash: false,
-          title: value.workspaceName,
-          workspaceOwner: props.user.id,
-          logo: filePath || "",
-          bannerUrl: "",
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        };
-        const { data, error: createError } =
-          await createWorkspace(newWorkspace);
-        if (createError) {
-          throw new Error();
-        }
-        dispatch({
-          type: "ADD_WORKSPACE",
-          payload: { ...newWorkspace, folders: [] },
-        });
-
-        toast.success(`${newWorkspace.title} has been created successfully.`);
-
-        router.replace(`/dashboard/${newWorkspace.id}`);
-      } catch (error) {
-        console.log(error, "Error");
-        toast.error(
-          "Oops! Something went wrong, and we couldn't create your workspace. Try again or come back later.",
-        );
-      } finally {
-        form.reset();
+    try {
+      const newWorkspace: Workspace = {
+        data: "",
+        iconId: selectedEmoji,
+        id: workspaceId,
+        inTrash: false,
+        title: value.workspaceName,
+        workspaceOwner: props.user.id,
+        logo: filePath || "",
+        bannerUrl: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: null,
+      };
+      const { data, error: createError } = await createWorkspace(newWorkspace);
+      if (createError) {
+        throw new Error();
       }
+      dispatch({
+        type: "ADD_WORKSPACE",
+        payload: { ...newWorkspace, folders: [] },
+      });
+
+      toast.success(`${newWorkspace.title} has been created successfully.`);
+
+      router.replace(`/dashboard/${newWorkspace.id}`);
+    } catch (error) {
+      console.log(error, "Error");
+      toast.error(
+        "Oops! Something went wrong, and we couldn't create your workspace. Try again or come back later.",
+      );
+    } finally {
+      form.reset();
     }
   }
 
   return (
-    <Card className="relative h-screen w-full shadow-md backdrop-blur-3xl dark:bg-black/25 sm:h-auto sm:w-[800px]">
+    <Card className="relative w-full shadow-md backdrop-blur-3xl dark:bg-black/25 sm:h-auto sm:w-[800px]">
       <div className="top-22 absolute -z-10 h-32 w-[30%] rounded-full bg-purple-600/60 blur-[120px] " />
       <CardHeader>
         <CardTitle>Create A Workspace</CardTitle>
