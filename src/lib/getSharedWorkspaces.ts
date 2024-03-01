@@ -1,6 +1,7 @@
 import db from "@/db";
 import { collaborators } from "@/db/schema/collaborators";
 import { workspaces } from "@/db/schema/workspaces";
+import { Workspace } from "@/types/supabase";
 import { eq } from "drizzle-orm";
 
 export async function getSharedWorkspaces(userId: string) {
@@ -24,7 +25,7 @@ export async function getSharedWorkspaces(userId: string) {
     }).from(workspaces).orderBy(workspaces.createdAt).innerJoin(
       collaborators,
       eq(workspaces.id, collaborators.workspaceId),
-    ).where(eq(workspaces.workspaceOwner, userId));
+    ).where(eq(workspaces.workspaceOwner, userId)) as Workspace[];
 
     if (!sharedWorkspaces) {
       return {

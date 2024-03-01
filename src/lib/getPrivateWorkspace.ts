@@ -3,8 +3,11 @@ import { and, eq, notExists } from "drizzle-orm";
 import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
 import { collaborators } from "@/migrations/schema";
+import { Workspace } from "@/types/supabase";
 
-export async function getPrivateWorkspace(userId: string, workspaceId: string) {
+export async function getPrivateWorkspaces(
+  userId: string,
+) {
   if (userId) return { error: "No user found", data: [] };
 
   try {
@@ -25,7 +28,7 @@ export async function getPrivateWorkspace(userId: string, workspaceId: string) {
         ),
         eq(workspaces.workspaceOwner, userId),
       ),
-    );
+    ) as Workspace[];
 
     if (!privateWorkspace) throw new Error("No private workspace found");
 

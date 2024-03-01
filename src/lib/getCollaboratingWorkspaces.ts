@@ -4,8 +4,9 @@ import db from "@/db";
 import { collaborators } from "@/db/schema/collaborators";
 import { workspaces } from "@/db/schema/workspaces";
 import { users } from "@/db/schema/users";
+import { Workspace } from "@/types/supabase";
 
-export async function collaboratingWorkspaces(userId: string) {
+export async function getCollaboratingWorkspaces(userId: string) {
   if (!userId) return { data: [], error: "No user id provided" };
 
   try {
@@ -28,7 +29,7 @@ export async function collaboratingWorkspaces(userId: string) {
       and(eq(collaborators.workspaceId, workspaces.workspaceOwner)),
     ).where(
       eq(users.id, userId),
-    );
+    ) as Workspace[];
 
     if (!collaboratingWorkspaces) {
       return {
