@@ -2,13 +2,13 @@ import { and, eq, notExists } from "drizzle-orm";
 
 import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
-import { collaborators } from "@/migrations/schema";
+import { collaborators } from "@/db/schema/collaborators";
 import { Workspace } from "@/types/supabase";
 
 export async function getPrivateWorkspaces(
   userId: string,
 ) {
-  if (userId) return { error: "No user found", data: [] };
+  if (!userId) return { error: "No user found", data: [] };
 
   try {
     const privateWorkspace = await db.select({
