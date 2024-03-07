@@ -9,6 +9,7 @@ import db from "@/db";
 import { workspaces } from "@/db/schema/workspaces";
 import { Toaster } from "@/components/ui/sonner";
 import AppStateProvider from "@/lib/providers/state-provider";
+import { SupabaseUserProvider } from "@/lib/providers/supabase-user-provider";
 
 const dm_Sans = DM_Sans({ subsets: ["latin"] });
 
@@ -33,7 +34,9 @@ export default async function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          <AppStateProvider>{children}</AppStateProvider>
+          <AppStateProvider>
+            <SupabaseUserProvider>{children}</SupabaseUserProvider>
+          </AppStateProvider>
           <Toaster />
         </ThemeProvider>
       </body>

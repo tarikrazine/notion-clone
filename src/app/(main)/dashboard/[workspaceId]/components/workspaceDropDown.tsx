@@ -67,11 +67,11 @@ function WorkspaceDropDown(props: WorkspaceDropDownProps) {
       {isOpen ? (
         <div className="group absolute z-50 h-[190px] w-full origin-top-right overflow-scroll rounded-md border-[1px] border-muted bg-black/10 shadow-md backdrop-blur-lg">
           <div className="flex flex-col rounded-md">
-            <div className="!p-2">
+            <div className="p-2">
               {!!props.privateWorkspaces.length ? (
                 <>
                   <p className="text-muted-foreground">Private</p>
-                  <hr />
+                  <hr className="" />
                   {props.privateWorkspaces.map((option) => (
                     <SelectedWorkspace
                       key={option.id}
@@ -110,10 +110,15 @@ function WorkspaceDropDown(props: WorkspaceDropDownProps) {
             </div>
             <CustomDialogTrigger
               header="Create Workspace"
-              content={<WorkspaceCreator></WorkspaceCreator>}
+              content={<WorkspaceCreator />}
               description="Workspaces give you the power to collaborate with others. You can change your workspace privacy settings after creating the workspace too."
             >
-              <></>
+              <div className="flex w-full items-center justify-center gap-2 p-2 transition-all hover:bg-muted">
+                <article className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-800 text-slate-500">
+                  +
+                </article>
+                Create Workspace
+              </div>
             </CustomDialogTrigger>
           </div>
         </div>
