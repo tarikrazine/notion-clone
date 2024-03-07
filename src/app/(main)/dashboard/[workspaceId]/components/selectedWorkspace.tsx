@@ -11,7 +11,7 @@ import { Workspace } from "@/types/supabase";
 
 interface SelectedWorkspaceProps {
   workspace: Workspace;
-  onClick?: () => void;
+  onClick?: (option: Workspace) => void;
 }
 
 function SelectedWorkspace(props: SelectedWorkspaceProps) {
@@ -35,7 +35,7 @@ function SelectedWorkspace(props: SelectedWorkspaceProps) {
     <Link
       href={`/dashboard/${props.workspace.id}`}
       onClick={() => {
-        if (props.onClick) props.onClick();
+        if (props.onClick) props.onClick(props.workspace);
       }}
       className="my-2 flex cursor-pointer flex-row items-center justify-center gap-4 rounded-md p-2 transition-all hover:bg-muted"
     >
